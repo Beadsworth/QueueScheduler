@@ -1,0 +1,7 @@
+Task(datetime.time(12, 0), True, beep, 'D5')
+Task(datetime.time(12, 0), True, beep, 'C5')
+Task(datetime.time(12, 0, 10), True, beep, 'E5')
+Task(datetime.time(12, 0, 20), True, beep, 'F5')
+Task(datetime.time(12, 0, 30), True, beep, 'G5')
+Task(datetime.time(12, 0, 40), True, beep, 'A5')
+Task(datetime.time(12, 0, 50), False, beep_scale)

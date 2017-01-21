@@ -3,7 +3,6 @@ import time
 import datetime
 
 from QueueScheduler import Task, TaskQueue
-from Beep import beep, beep_scale
 
 
 class TestTaskScheduler(unittest.TestCase):
@@ -22,102 +21,33 @@ class TestTaskScheduler(unittest.TestCase):
         self.assertTrue(True)
 
     def test_task_queue(self):
+        queue = TaskQueue()
 
-        time1 = datetime.time(hour=12, minute=00, second=0)
-        time2 = datetime.time(hour=12, minute=00, second=10)
-        time3 = datetime.time(hour=12, minute=00, second=20)
-        time4 = datetime.time(hour=12, minute=00, second=30)
-        time5 = datetime.time(hour=12, minute=00, second=40)
-        time6 = datetime.time(hour=12, minute=00, second=50)
+        time_12am = datetime.time(12, 50, 0)
+        time_6am = datetime.time(6, 0, 10)
+        time_12pm = datetime.time(12, 0, 20)
+        time_5pm = datetime.time(17, 0, 30)
+        time_6pm = datetime.time(18, 0, 40)
 
-        task1 = Task(time1, True, beep, 'C5')
-        task2 = Task(time1, True, beep, 'D5')
-        task3 = Task(time2, True, beep, 'E5')
-        task4 = Task(time3, True, beep, 'F5')
-        task5 = Task(time4, True, beep, 'G5')
-        task6 = Task(time5, True, beep, 'A5')
-        task7 = Task(time6, False, beep_scale)
+        task_12am = Task(time_12am, True, print, time_12am.strftime("%I:%M:%S %p"))
+        task_6am = Task(time_6am, True, print, time_6am.strftime("%I:%M:%S %p"))
+        task_12pm = Task(time_12pm, True, print, time_12pm.strftime("%I:%M:%S %p"))
+        task_5pm = Task(time_5pm, False, print, time_5pm.strftime("%I:%M:%S %p"))  # do once
+        task_6pm = Task(time_6pm, True, print, time_6pm.strftime("%I:%M:%S %p"))
 
-        sched = TaskQueue()
-        sched.add_task(task7)
-        sched.add_task(task6)
-        sched.add_task(task5)
-        sched.add_task(task4)
-        sched.add_task(task3)
-        sched.add_task(task2)
-        sched.add_task(task1)
+        queue.add_task(task_12am)
+        queue.add_task(task_6am)
+        queue.add_task(task_12pm)
+        queue.add_task(task_5pm)
+        queue.add_task(task_6pm)
 
-        secs_left = 125
-
-        start_time = time.time()
-
-        temp_sec = datetime.datetime.now().time().second
-        while secs_left > 0:
-            # TODO fix NoneType error that happens occasionally
-            current_sec = datetime.datetime.now().time().second
-            sched.run()
-            if temp_sec != current_sec:
-                print('Seconds: ' + str(current_sec))
-                temp_sec = current_sec
-                secs_left -= 1
-
-        print('First loop complete')
-        secs_left = 125
-        sched.add_task(task7)
-
-        while secs_left > 0:
-            current_sec = datetime.datetime.now().time().second
-            sched.run()
-            if temp_sec != current_sec:
-                print('Seconds: ' + str(current_sec))
-                temp_sec = current_sec
-                secs_left -= 1
-
-    def test_task_str(self):
-        task1 = Task(datetime.datetime.now().time(), True, beep, 'G5')
-        print(repr(task1))
-
-    def test_read_write_queue(self):
-
-        filename_str = 'test_queue.txt'
-
-        time1 = datetime.time(hour=12, minute=00, second=0)
-        time2 = datetime.time(hour=12, minute=00, second=10)
-        time3 = datetime.time(hour=12, minute=00, second=20)
-        time4 = datetime.time(hour=12, minute=00, second=30)
-        time5 = datetime.time(hour=12, minute=00, second=40)
-        time6 = datetime.time(hour=12, minute=00, second=50)
-
-        task1 = Task(time1, True, beep, 'C5')
-        task2 = Task(time1, True, beep, 'D5')
-        task3 = Task(time2, True, beep, 'E5')
-        task4 = Task(time3, True, beep, 'F5')
-        task5 = Task(time4, True, beep, 'G5')
-        task6 = Task(time5, True, beep, 'A5')
-        task7 = Task(time6, False, beep_scale)
-
-        sched = TaskQueue()
-        sched.add_task(task7)
-        sched.add_task(task6)
-        sched.add_task(task5)
-        sched.add_task(task4)
-        sched.add_task(task3)
-        sched.add_task(task2)
-        sched.add_task(task1)
-
-        sched.filename_str = 'test_queue.txt'
-        sched.write_queue()
-
-        new_queue = TaskQueue(filename_str)
-
-        pass
+        while True:
+            queue.run()
+            time.sleep(1)
 
 
 if __name__ == '__main__':
     unittest.main()
-
-
-
 
 
 
